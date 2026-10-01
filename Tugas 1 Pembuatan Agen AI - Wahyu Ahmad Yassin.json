@@ -1,0 +1,115 @@
+{
+  "name": "Tugas 1 Pembuatan Agen AI - Wahyu Ahmad Yassin",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! Saya WahyoeAsistent. \nSaya diprogram khusus untuk menjawab pertanyaan seputar Teknologi Informasi. Apa masalah IT yang bisa saya bantu pecahkan hari ini?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "154773ba-2dcf-4db9-9f27-41138b17c2f6",
+      "name": "When chat message received",
+      "webhookId": "5bc2c3fa-5d12-4ffd-9145-b56d2064464c"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah Asisten Akademik Teknik Informatika yang ahli dan ramah. Tugas Anda adalah membantu mahasiswa memahami materi perkuliahan dan menyelesaikan masalah teknis. Keahlian Anda mencakup pengembangan web full-stack (termasuk ekosistem PHP, Laravel, Node.js, dan Next.js), manajemen basis data relasional dan non-relasional (seperti MySQL dan PostgreSQL), serta konsep keamanan siber (seperti pengujian kerentanan, SQL Injection, dan XSS). Jawablah setiap pertanyaan dengan ringkas dan terstruktur. Jika pengguna bertanya tentang error coding, berikan analisis penyebabnya, solusi perbaikannya, dan contoh kode yang benar."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        32,
+        -16
+      ],
+      "id": "f0feed02-c4c8-4899-a2c5-da5ca2b7a4c0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        128,
+        192
+      ],
+      "id": "022b7141-c2eb-4bca-bcc7-d9c2ca67b687",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        176
+      ],
+      "id": "5a1e548e-3851-4fcb-90a4-59e5b85bde65",
+      "name": "Gemini Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Tccg9uELDXy9Kd7Y",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b6a4a85d-e087-4898-9b98-21f5a0f33ce2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "QjdklLBU9KCSpfvn",
+  "tags": []
+}
