@@ -1,0 +1,241 @@
+{
+  "name": "Tugas 2 - AI Agent - Wahyu Ahmad Yassin",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! 👋 Saya Coach Wahyoe. \nSedang mencari pelatihan IT yang cocok atau ingin cek harga kursus? Tanyakan saja pada saya!",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "ca605fb4-4709-48b0-9a2b-29630516ac52",
+      "name": "When chat message received",
+      "webhookId": "29995d3d-62f8-413b-96f8-306b5082c447"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah asisten AI dari Lembaga Pelatihan IT. Tugas utama Anda adalah menjawab pertanyaan pelanggan mengenai produk pelatihan dan harganya. Setelah data ditemukan, langsung buat ringkasan harga dan berikan jawaban akhir kepada pengguna tanpa memanggil tool lagi.\nGunakan tool Google Sheets yang tersedia untuk mengambil data produk, harga, dan durasi pelatihan. \nSelalu jawab dengan ramah, profesional, dan gunakan Bahasa Indonesia. Jika produk tidak ada dalam data sheet, sampaikan dengan sopan bahwa pelatihan tersebut saat ini belum tersedia.",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        32,
+        -16
+      ],
+      "id": "c49f9768-3fa7-4440-bbee-57968cb19dbd",
+      "name": "AI Agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        176
+      ],
+      "id": "65fbcb0a-6130-4ba5-99d1-73afbb7e94e5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Tccg9uELDXy9Kd7Y",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lH0Gb5oVx3-lNR_StpeaN8j0mxJQmHzZVitPXoIlAvg",
+          "mode": "list",
+          "cachedResultName": "Data Produk Pelatihan - Chatbot n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lH0Gb5oVx3-lNR_StpeaN8j0mxJQmHzZVitPXoIlAvg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lH0Gb5oVx3-lNR_StpeaN8j0mxJQmHzZVitPXoIlAvg/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        160
+      ],
+      "id": "ceec520b-f37a-4dda-aed7-c1cb146bb16a",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T9eh1WhJRY3wZVHb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        112,
+        176
+      ],
+      "id": "076db895-3680-4746-9722-b21d0fcdf2e8",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "035e63fb-2b32-4c96-a2d3-e36d4cb06651",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        320,
+        -16
+      ],
+      "id": "c1baba6a-592d-4f64-86ed-7b4d07f94515",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5a51672-5022-40ef-9f0d-871123ddba72",
+              "name": "output",
+              "value": "Maaf ya, sistem sedang penuh melayani banyak permintaan. Boleh coba kirim pesanmu lagi dalam 1-2 menit :)",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        528,
+        -64
+      ],
+      "id": "9c63c95c-b59c-4061-9f3d-8f824d5d72e1",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ee315c45-690f-41f4-8f6b-66da20ae491e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "rZlNrdbZWZEP97pf",
+  "tags": []
+}
